@@ -1,0 +1,5 @@
+# MICROSERVICES FOR THE SOCK SHOP
+
+This is a collection of microservices that make up the Sock Shop. The Sock Shop is a cloud-native microservices demo application. It is built on a modern technology stack and demonstrates the use of microservices architecture patterns. The application is a web-based e-commerce platform that sells socks. It comprises a number of services that work together to provide a complete solution. The services are written in different programming languages and use different data storage technologies. The application is designed to be deployed on a cloud platform such as Amazon Web Services (AWS), Microsoft Azure, Google Cloud Platform, or Kubernetes.
+
+This directory contains manifests for deploying the Sock Shop microservices on Kubernetes. The manifests are written in YAML and are used to define the desired state of the application. Each directory contains the necessary Kubernetes resources for deploying the microservice. The resources include deployments, services and database configurations.

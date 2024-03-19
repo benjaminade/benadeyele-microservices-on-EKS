@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sock-shop
+  namespace: sock-shop
+  annotations:
+    cert-manager.io/cluster-issuer: production
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: sock-shop.adeyeletechhub.com.ng
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: front-end
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - adeyeletechhub.com.ng
+      secretName: production-cluster-issuer
+
+
+
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: adeyeletechhub-ingress
+#   namespace: default
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     cert-manager.io/issuer: letsencrypt-prod
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+#     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+# spec:
+#   tls:
+#     - hosts:
+#         - adeyeletechhub.com.ng
+#       secretName: adeyeletechhub-tls-secret
+#   rules:
+#     - host: adeyeletechhub.com.ng
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: front-end
+#                 port:
+#                   number: 80
