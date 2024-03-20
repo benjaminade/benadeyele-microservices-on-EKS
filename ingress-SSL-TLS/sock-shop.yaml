@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: sock-shop
-  namespace: sock-shop
   annotations:
     cert-manager.io/cluster-issuer: production
     kubernetes.io/ingress.class: nginx
@@ -25,7 +24,7 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - adeyeletechhub.com.ng
+        - sock-shop.adeyeletechhub.com.ng
       secretName: production-cluster-issuer
 
 
