@@ -1,0 +1,86 @@
+name: Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_infrastructure:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Deploy Infrastructure
+        run: |
+          cd 
+          # Run your infrastructure deployment scripts here
+
+  deploy_argocd:
+    name: Deploy Argo CD
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install kubectl
+        uses: azure/kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy Argo CD
+        run: |
+          cd argocd
+          # Run your Argo CD deployment scripts here
+
+  deploy_logging:
+    name: Deploy Logging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install kubectl
+        uses: azure/kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy Logging
+        run: |
+          cd logging
+          # Run your logging deployment scripts here
+
+  deploy_monitoring:
+    name: Deploy Monitoring
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install kubectl
+        uses: azure/kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy Monitoring
+        run: |
+          cd monitoring
+          # Run your monitoring deployment scripts here
