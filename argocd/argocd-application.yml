@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sock-shop-application
+  namespace: argocd
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: sock-shop-app
+  project: default
+  source:
+    repoURL: 'https://github.com/example/example-repo.git'
+    path: sock-shop-app
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    
+    automated:
+      prune: true
+      selfHeal: true
