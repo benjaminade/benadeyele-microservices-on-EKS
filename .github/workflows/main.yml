@@ -67,10 +67,10 @@ jobs:
         run: aws eks update-kubeconfig --name benade-eks-1QDOr2Bg --region us-east-1
 
       - name: Install ArgoCD
-      
+        working-directory: argocd
         run: |
-          kubectl create namespace argocd
-          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
+          ./argodc-install.sh
+          kubectl apply -f argocd-application.yml
           sleep 30  # Wait for ArgoCD pods to start
 
       # - name: Get ArgoCD admin password
