@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ben-ingress
-  namespace: sock-shop
+  namespace: monitoring
   annotations:
    #kubernetes.io/ingress.class: nginx
    cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -10,18 +10,18 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sock-shop.adeyeletechhub.com.ng
+  - host: grafana.adeyeletechhub.com.ng
     http:
       paths:
         - path: /
           pathType: Prefix
           backend:
             service:
-              name: front-end
+              name: grafana
               port:
                 number: 80
       
   tls:
       - hosts:
-          - sock-shop.adeyeletechhub.com.ng
+          - grafana.adeyeletechhub.com.ng
         secretName: tls-secret
