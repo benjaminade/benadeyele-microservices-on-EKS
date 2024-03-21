@@ -7,7 +7,6 @@ metadata:
     name: carts-db
   namespace: sock-shop
 spec:
-  type: LoadBalancer
   ports:
     # the port that this service should serve on
   - port: 27017
