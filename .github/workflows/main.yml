@@ -1,4 +1,4 @@
-name: Deploy Pipeline
+name: Terraform Deployment
 
 on:
   push:
@@ -6,13 +6,55 @@ on:
       - main
 
 jobs:
-  deploy_infrastructure:
-    name: Deploy Infrastructure
+  terraform:
+    name: create s3 bucket and dynamodb table locking
+    runs-on: ubuntu-latest
+    # env:
+    #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.0
+
+      - name: Create s3 bucket
+        working-directory: ./backend
+        run: |
+          terraform init
+          terraform apply -auto-approve -input=false
+      
+      - name: aws eks cluster
+        working-directory: ./EKS_infrastructure
+        run: |
+          terraform init
+          terraform apply -auto-approve -input=false
+
+
+  install_argocd:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Set up kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
@@ -21,66 +63,26 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Install AWS CLI
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name benade-eks-1QDOr2Bg --region us-east-1
+
+      - name: Install ArgoCD
+      
         run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
+          kubectl create namespace argocd
+          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.4.7/manifests/install.yaml
+          sleep 30  # Wait for ArgoCD pods to start
 
-      - name: Deploy Infrastructure
+      # - name: Get ArgoCD admin password
+      #   run: |
+      #     kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64
+
+      - name: Deploy ELK stack for logging
+        working-directory: ELK_logging
         run: |
-          cd 
-          # Run your infrastructure deployment scripts here
+          kubectl apply -f .
 
-  deploy_argocd:
-    name: Deploy Argo CD
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install kubectl
-        uses: azure/kubectl@v1
-        with:
-          version: 'latest'
-
-      - name: Deploy Argo CD
+      - name: Deploy monitoring applications
+        working-directory: monitoring
         run: |
-          cd argocd
-          # Run your Argo CD deployment scripts here
-
-  deploy_logging:
-    name: Deploy Logging
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install kubectl
-        uses: azure/kubectl@v1
-        with:
-          version: 'latest'
-
-      - name: Deploy Logging
-        run: |
-          cd logging
-          # Run your logging deployment scripts here
-
-  deploy_monitoring:
-    name: Deploy Monitoring
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install kubectl
-        uses: azure/kubectl@v1
-        with:
-          version: 'latest'
-
-      - name: Deploy Monitoring
-        run: |
-          cd monitoring
-          # Run your monitoring deployment scripts here
+          kubectl apply -f .
