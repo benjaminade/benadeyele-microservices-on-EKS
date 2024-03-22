@@ -12,4 +12,4 @@ $ kubectl get all -n ingress-nginx
 
 $ kubectl apply -f 02-cert-manager.crds.yaml
 
-5. You can now deploy the sockshop application. Then goto Route53 and create DNS record for your domain name specified as host in your ingress-rule file
+3. You can now deploy the sockshop application. Then goto Route53 and create DNS record for your domain name specified as host in your ingress-rule file
