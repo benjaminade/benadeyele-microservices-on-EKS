@@ -2,7 +2,7 @@
 
 1. Install ingress controller. A Network loadbalancer will be  created where all the external traffic will be sent. Do:
 
-$ kubectl apply -f 01-install-nginx-controller.yml
+$ ./01-install-nginx-controller.sh
 
 You can see the ingress resources and pods in ingress-nginx namespace and you can check using the command:
 

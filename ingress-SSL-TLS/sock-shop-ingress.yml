@@ -22,4 +22,4 @@ spec:
   tls:
       - hosts:
           - sock-shop.adeyeletechhub.com.ng
-        secretName: tls-secret
+        secretName: tls-secret1
