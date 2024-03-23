@@ -6,11 +6,11 @@ metadata:
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: sock-shop-app
+    namespace: sock-shop
   project: default
   source:
-    repoURL: 'https://github.com/example/example-repo.git'
-    path: sock-shop-app
+    repoURL: https://github.com/benjaminade/benadeyele-microservices-on-EKS.git
+    path: ben-sockshop-app
     targetRevision: HEAD
   syncPolicy:
     syncOptions:
